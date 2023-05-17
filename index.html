@@ -6,29 +6,49 @@
 </head>
 
 <body>
+
+    <!-- Nonogram Grid. -->
     <div class="nonogram-wrapper">
         <table id="nonogram-table"></table>
-        <button id="share-button">Share</button>
     </div>
-    <div class="footer-wrapper">
-        <div class="text-block"> 
-            <h1>How to Play Nonogram</h1>
-            <ol>
-                <li><strong>Look at the numbers:</strong> These numbers show how many squares to fill in each row and column.</li>
-                <li><strong>Fill in squares:</strong> Based on the numbers, fill in squares on the grid. If you see '3', it means fill in 3 squares together.</li>
-                <li><strong>Leave spaces:</strong> If you see '3 2', fill in 3 squares together, leave at least one square blank, then fill in 2 squares together.</li>
-                <li><strong>Use deduction:</strong> As you fill in squares, you can figure out where other squares should be filled.</li>
-                <li><strong>Complete the picture:</strong> Keep filling in squares until you reveal a picture!</li>
-            </ol>
-            <p>Remember, the numbers show groups of filled squares. Each group is separated by at least one blank square.</p>
-        </div>
-        <div class="text-block">
-            <h1>About</h1>
-            <p>
-                Hi, I'm a Nonogram puzzle builder! I aim to design puzzles that bring joy to every solver!
-            </p>
+
+    <div class="buttons-container">
+        <button id="open-how-to-modal" class="btn share-btn">❓</button>
+        <button id="open-share-modal" class="btn help-btn">🔗</button>
+    </div>
+    
+
+    <!-- Modals -->
+    <div id="how-to-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-how-to-modal" class="close">&times;</span>
+            <div class="text-block"> 
+                <h1>How to Play Nonogram</h1>
+                <ol>
+                    <li><strong>Look at the numbers:</strong> These numbers show how many squares to fill in each row and column.</li>
+                    <li><strong>Fill in squares:</strong> Based on the numbers, fill in squares on the grid. If you see '3', it means fill in 3 squares together.</li>
+                    <li><strong>Leave spaces:</strong> If you see '3 2', fill in 3 squares together, leave at least one square blank, then fill in 2 squares together.</li>
+                    <li><strong>Use deduction:</strong> As you fill in squares, you can figure out where other squares should be filled.</li>
+                    <li><strong>Complete the picture:</strong> Keep filling in squares until you reveal a picture!</li>
+                </ol>
+                <p>Remember, the numbers show groups of filled squares. Each group is separated by at least one blank square.</p>
+            </div>
         </div>
     </div>
+    <div id="share-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-share-modal" class="close">&times;</span>
+            <div class="text-block">
+                <h1>Share</h1>
+                <p>
+                    Press the share button to copy your nonogram result to share to social media!
+                </p>
+                <p id="nonogram-preview"></p>
+                <button id="share-button">Share</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/script.js"></script>
 </body>
 

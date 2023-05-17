@@ -303,5 +303,48 @@ function enableShareButton() {
   });
 }
 
+function enableHowToModal() {
+  var modal = document.getElementById("how-to-modal");
+  var openButton = document.getElementById("open-how-to-modal");
+  var closeButton = document.getElementById("close-how-to-modal");
+  openButton.onclick = function() {
+    modal.style.display = "block";
+  }
+  
+  closeButton.onclick = function() {
+    modal.style.display = "none";
+  }
+  
+  window.addEventListener('click', function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  });
+}
+
+function enableShareModal() {
+  var modal = document.getElementById("share-modal");
+  var openButton = document.getElementById("open-share-modal");
+  var closeButton = document.getElementById("close-share-modal");
+  var nonogramPreview = document.getElementById("nonogram-preview");
+  openButton.onclick = function() {
+    modal.style.display = "block";
+    console.log(getNonogramAsEmoji());
+    nonogramPreview.textContent = getNonogramAsEmoji();
+  }
+  
+  closeButton.onclick = function() {
+    modal.style.display = "none";
+  }
+  
+  window.addEventListener('click', function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  });
+}
+
 createNonogram();
 enableShareButton();
+enableHowToModal();
+enableShareModal();
