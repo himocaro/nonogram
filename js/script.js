@@ -1,26 +1,106 @@
+// 5 x 5
+// let hints = {
+//   rowHints: [[2, 2], [], [1, 2], [3], [3]],
+//   colHints: [[1, 2], [1, 2], [2], [1, 1, 1], [1, 1]],
+// };
+
+// 10 x 10
+// let hints = {
+//   rowHints: [
+//     [1, 3, 2],
+//     [1, 2],
+//     [1, 2],
+//     [5],
+//     [3],
+//     [3, 4],
+//     [1, 1, 3, 1],
+//     [2, 1],
+//     [1, 1, 2, 2],
+//     [1, 3, 1],
+//   ],
+//   colHints: [
+//     [2, 1, 2],
+//     [1, 1],
+//     [1, 3, 1],
+//     [2, 3, 1, 1],
+//     [1, 2, 3],
+//     [1, 2, 2, 2],
+//     [2, 2],
+//     [1, 1, 2],
+//     [1, 1, 2],
+//     [1, 2],
+//   ],
+// };
+
 let hints = {
-  rowHints: [[2, 2], [], [1, 2], [3], [3]],
-  colHints: [[1, 2], [1, 2], [2], [1, 1, 1], [1, 1]],
+  rowHints: [
+    [1, 2, 1],
+    [2, 2, 1],
+    [1, 2, 1],
+    [2, 2, 1],
+    [2, 2, 1],
+    [1, 3],
+    [2, 2],
+    [5, 2],
+  ],
+  colHints: [
+    [5, 1],
+    [1, 2, 2],
+    [2],
+    [1, 2, 1, 1],
+    [5, 2],
+    [1, 3],
+    [1, 1, 1, 1],
+    [2, 2, 1],
+  ],
 };
 
-let solution = [
-  [1, 1, 0, 1, 1],
-  [0, 0, 0, 0, 0],
-  [1, 0, 0, 1, 1],
-  [1, 1, 1, 0, 0],
-  [0, 1, 1, 1, 0],
-];
+// 5 x 5
+// let solution = [
+//   [1, 1, 0, 1, 1],
+//   [0, 0, 0, 0, 0],
+//   [1, 0, 0, 1, 1],
+//   [1, 1, 1, 0, 0],
+//   [0, 1, 1, 1, 0],
+// ];
 
+// 10 x 10
+// let solution = [
+//   [1, 0, 0, 1, 1, 1, 0, 1, 1, 0],
+//   [1, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+//   [0, 1, 0, 0, 0, 1, 1, 0, 0, 0],
+//   [0, 0, 0, 1, 1, 1, 1, 1, 0, 0],
+//   [0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+//   [0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
+//   [1, 0, 1, 0, 0, 1, 1, 1, 0, 1],
+//   [0, 0, 0, 1, 1, 0, 0, 0, 1, 0],
+//   [1, 0, 1, 0, 1, 1, 0, 0, 1, 1],
+//   [1, 0, 0, 1, 1, 1, 0, 0, 0, 1]
+// ];
+
+// 8 x 8
+let solution = [
+  [1, 0, 0, 1, 1, 0, 1, 0],
+  [1, 1, 0, 0, 1, 1, 0, 1],
+  [1, 0, 0, 1, 1, 0, 0, 1],
+  [1, 1, 0, 1, 1, 0, 1, 0],
+  [1, 1, 0, 0, 1, 1, 0, 1],
+  [0, 0, 0, 1, 0, 1, 1, 1],
+  [0, 1, 1, 0, 1, 1, 0, 0],
+  [1, 1, 1, 1, 1, 0, 1, 1],
+];
 
 function createNonogram() {
   let table = document.getElementById("nonogram-table");
 
+  const numOfRows = solution.length;
+  const numOfCols = solution[0].length;
   let maxRowHints = Math.max(...hints.rowHints.map((hint) => hint.length));
   let maxColHints = Math.max(...hints.colHints.map((hint) => hint.length));
 
-  for (let i = 0; i < maxColHints + 5; i++) {
+  for (let i = 0; i < maxColHints + numOfRows; i++) {
     let row = document.createElement("tr");
-    for (let j = 0; j < maxRowHints + 5; j++) {
+    for (let j = 0; j < maxRowHints + numOfCols; j++) {
       let cell = document.createElement("td");
       if (i < maxColHints && j >= maxRowHints) {
         // Column hints
@@ -147,4 +227,81 @@ function validateColumn(colIndex, offset) {
   }
 }
 
+function getCellEmoji(cell) {
+  if (cell.classList.contains("correct")) {
+    return "\u{1F7E9}";  // 🟩
+  } else if (cell.classList.contains("incorrect")) {
+    return "\u{1F7E5}";  // 🟥
+  } else if (cell.classList.contains("empty-correct")) {
+    return "\u{1F7E8}";  // 🟨
+  } else if (cell.classList.contains("hint")) {
+    if (cell.innerText === "1") {
+      return "\u{0031}\u{FE0F}\u{20E3}";  // 1️⃣
+    } else if (cell.innerText === "2") {
+      return "\u{0032}\u{FE0F}\u{20E3}";  // 2️⃣
+    } else if (cell.innerText === "3") {
+      return "\u{0033}\u{FE0F}\u{20E3}";  // 3️⃣
+    } else if (cell.innerText === "4") {
+      return "\u{0034}\u{FE0F}\u{20E3}";  // 4️⃣
+    } else if (cell.innerText === "5") {
+      return "\u{0035}\u{FE0F}\u{20E3}";  // 5️⃣
+    } else if (cell.innerText === "6") {
+      return "\u{0036}\u{FE0F}\u{20E3}";  // 6️⃣
+    } else if (cell.innerText === "7") {
+      return "\u{0037}\u{FE0F}\u{20E3}";  // 7️⃣
+    } else if (cell.innerText === "8") {
+      return "\u{0038}\u{FE0F}\u{20E3}";  // 8️⃣
+    } else if (cell.innerText === "9") {
+      return "\u{0039}\u{FE0F}\u{20E3}";  // 9️⃣
+    }
+  } else {
+    return "\u{2B1C}\u{FE0F}";  // ⬜️
+  }
+}
+
+
+function getNonogramAsEmoji() {
+  let res = "";
+  // Get the nonogram table
+  var table = document.getElementById("nonogram-table");
+
+  // Get all the rows in the table
+  var rows = table.getElementsByTagName("tr");
+
+  // Loop over each row
+  for (var i = 0; i < rows.length; i++) {
+    // Get all the cells in the current row
+    var cells = rows[i].getElementsByTagName("td");
+    const resRow = [];
+
+    // Loop over each cell
+    for (var j = 0; j < cells.length; j++) {
+      // Now you have access to each cell
+      var cell = cells[j];
+
+      // Add emoji to string
+      res += getCellEmoji(cell);
+    }
+    res += "\n";
+  }
+  return res;
+}
+
+function enableShareButton() {
+  const shareButton = document.getElementById("share-button");
+  shareButton.addEventListener("click", function () {
+    let sharedText = "@nonogrammers 8762\n\n";
+    sharedText += getNonogramAsEmoji();
+    navigator.clipboard
+      .writeText(sharedText)
+      .then(() => {
+        console.log("Text copied to clipboard");
+      })
+      .catch((err) => {
+        console.error("Could not copy text: ", err);
+      });
+  });
+}
+
 createNonogram();
+enableShareButton();
