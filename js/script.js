@@ -255,7 +255,7 @@ function getCellEmoji(cell) {
       return "\u{0039}\u{FE0F}\u{20E3}";  // 9️⃣
     }
   } else {
-    return "\u{2B1C}\u{FE0F}";  // ⬜️
+    return "\u{2B1C}";  // ⬜
   }
 }
 
