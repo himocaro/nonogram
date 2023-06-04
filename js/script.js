@@ -18,75 +18,53 @@ const daysCount = countDaysFromDate(START_DATE);
 let hints = DAILY_HINTS[daysCount];
 let solution = DAILY_SOLUTIONS[daysCount];
 
-console.log(hints, solution);
+const NUM_OF_ROWS = solution.length;
+const NUM_OF_COLS = solution[0].length;
+const MAX_ROW_HINTS = Math.max(...hints.rowHints.map((hint) => hint.length));
+const MAX_COL_HINTS = Math.max(...hints.colHints.map((hint) => hint.length));
+// Initialize table state array with all cells empty.
+const TABLE_STATE = Array.from({ length: NUM_OF_ROWS }, () =>
+  Array.from({ length: NUM_OF_COLS }, () => 0)
+);
 
+const TABLE = document.getElementById("nonogram-table");
 
 
 function createNonogram() {
-  let table = document.getElementById("nonogram-table");
-
-  const numOfRows = solution.length;
-  const numOfCols = solution[0].length;
-  let maxRowHints = Math.max(...hints.rowHints.map((hint) => hint.length));
-  let maxColHints = Math.max(...hints.colHints.map((hint) => hint.length));
-
-  for (let i = 0; i < maxColHints + numOfRows; i++) {
+  for (let i = 0; i < MAX_COL_HINTS + NUM_OF_ROWS; i++) {
     let row = document.createElement("tr");
-    for (let j = 0; j < maxRowHints + numOfCols; j++) {
+    for (let j = 0; j < MAX_ROW_HINTS + NUM_OF_COLS; j++) {
       let cell = document.createElement("td");
-      if (i < maxColHints && j >= maxRowHints) {
+      if (i < MAX_COL_HINTS && j >= MAX_ROW_HINTS) {
         // Column hints
-        let hint = [...hints.colHints[j - maxRowHints]].reverse();
-        if (hint && hint[maxColHints - i - 1] !== undefined) {
-          cell.textContent = hint[maxColHints - i - 1];
+        let hint = [...hints.colHints[j - MAX_ROW_HINTS]].reverse();
+        if (hint && hint[MAX_COL_HINTS - i - 1] !== undefined) {
+          cell.textContent = hint[MAX_COL_HINTS - i - 1];
           // cell.textContent = hint[i - 1];
           cell.classList.add("hint");
         }
-      } else if (j < maxRowHints && i >= maxColHints) {
+      } else if (j < MAX_ROW_HINTS && i >= MAX_COL_HINTS) {
         // Row hints
-        let hint = [...hints.rowHints[i - maxColHints]].reverse();
-        if (hint && hint[maxRowHints - j - 1] !== undefined) {
-          cell.textContent = hint[maxRowHints - j - 1];
+        let hint = [...hints.rowHints[i - MAX_COL_HINTS]].reverse();
+        if (hint && hint[MAX_ROW_HINTS - j - 1] !== undefined) {
+          cell.textContent = hint[MAX_ROW_HINTS - j - 1];
           cell.classList.add("hint");
         }
-      } else if (i >= maxColHints && j >= maxRowHints) {
+      } else if (i >= MAX_COL_HINTS && j >= MAX_ROW_HINTS) {
         // Cells
         cell.classList.add("cell");
-        let row = i - maxColHints;
-        let col = j - maxRowHints;
-        cell.addEventListener("click", function () {
-          console.log(this.classList.contains("filled"));
-          if (this.classList.contains("filled")) {
-            return;
-          }
-          this.classList.add("filled");
-          if (solution[row][col] === 1 && this.classList.contains("filled")) {
-            this.classList.add("correct");
-            this.classList.remove("incorrect");
-          } else if (
-            solution[row][col] === 0 &&
-            this.classList.contains("filled")
-          ) {
-            this.classList.add("incorrect");
-            this.classList.remove("correct");
-          } else {
-            this.classList.remove("correct", "incorrect");
-          }
-          validateRow(row, maxRowHints);
-          validateColumn(col, maxColHints);
-        });
       }
       row.appendChild(cell);
     }
-    table.appendChild(row);
+    TABLE.appendChild(row);
   }
 
-  for (let i = 0; i < maxColHints + 5; i++) {
-    let row = i - maxColHints;
-    validateRow(row, maxRowHints);
-    for (let j = 0; j < maxRowHints + 5; j++) {
-      let col = j - maxRowHints;
-      validateColumn(col, maxColHints);
+  for (let i = 0; i < MAX_COL_HINTS + 5; i++) {
+    let row = i - MAX_COL_HINTS;
+    validateRow(row, MAX_ROW_HINTS);
+    for (let j = 0; j < MAX_ROW_HINTS + 5; j++) {
+      let col = j - MAX_ROW_HINTS;
+      validateColumn(col, MAX_COL_HINTS);
     }
   }
 }
@@ -120,16 +98,14 @@ function arraysEqual(a, b) {
 }
 
 function validateRow(rowIndex, offset) {
-  let rowCells = Array.from(
-    document.querySelectorAll(
-      `#nonogram-table tr:nth-child(${rowIndex + offset + 1}) .cell`
-    )
-  );
-  let currentRow = rowCells.map((cell) =>
-    cell.classList.contains("correct") ? 1 : 0
-  );
-  let hint = getHintFromRow(currentRow);
+  const currentRow = TABLE_STATE[rowIndex];
+  const hint = getHintFromRow(currentRow);
   if (arraysEqual(hint, hints.rowHints[rowIndex])) {
+    const rowCells = Array.from(
+      document.querySelectorAll(
+        `#nonogram-table tr:nth-child(${rowIndex + offset + 1}) .cell`
+      )
+    );
     rowCells.forEach((cell) => {
       if (!cell.classList.contains("filled")) {
         cell.classList.add("empty-correct");
@@ -140,16 +116,18 @@ function validateRow(rowIndex, offset) {
 }
 
 function validateColumn(colIndex, offset) {
-  let colCells = Array.from(
-    document.querySelectorAll(
-      `#nonogram-table tr .cell:nth-child(${colIndex + offset + 1})`
-    )
-  );
-  let currentCol = colCells.map((cell) =>
-    cell.classList.contains("correct") ? 1 : 0
-  );
-  let hint = getHintFromRow(currentCol);
+  const currentCol = [];
+
+  for (let r = 0; r < NUM_OF_ROWS; ++r) {
+    currentCol.push(TABLE_STATE[r][colIndex]);
+  }
+  const hint = getHintFromRow(currentCol);
   if (arraysEqual(hint, hints.colHints[colIndex])) {
+    const colCells = Array.from(
+      document.querySelectorAll(
+        `#nonogram-table tr .cell:nth-child(${colIndex + offset + 1})`
+      )
+    );
     colCells.forEach((cell) => {
       if (!cell.classList.contains("filled")) {
         cell.classList.add("empty-correct");
@@ -157,6 +135,48 @@ function validateColumn(colIndex, offset) {
       }
     });
   }
+}
+
+// Function to handle cell click
+function handleNonogramCellSelection(cell) {
+  if (cell.classList.contains("filled") || cell.classList.contains("hint")) {
+    return;
+  }
+  const CELLS = Array.from(TABLE.querySelectorAll(".cell"));
+  const row = Math.floor(CELLS.indexOf(cell) / NUM_OF_COLS);
+  const col = CELLS.indexOf(cell) % NUM_OF_COLS;
+  cell.classList.add("filled");
+  if (solution[row][col] === 1) {
+    cell.classList.add("correct");
+    TABLE_STATE[row][col] = 1;
+
+    validateRow(row, MAX_ROW_HINTS);
+    validateColumn(col, MAX_COL_HINTS);
+  } else {
+    cell.classList.add("incorrect");
+  }
+}
+
+function attachNonogramCellSelectionEventHandlers() {
+  let isDragging = false; // Flag to track if dragging is in progress
+
+  // Event listener for mouse/finger down event
+  TABLE.addEventListener("mousedown", function (event) {
+    isDragging = true;
+    handleNonogramCellSelection(event.target);
+  });
+
+  // Event listener for mouse/finger move event
+  TABLE.addEventListener("mousemove", function (event) {
+    if (isDragging) {
+      handleNonogramCellSelection(event.target);
+    }
+  });
+
+  // Event listener for mouse/finger up event
+  window.addEventListener("mouseup", function () {
+    isDragging = false;
+  });
 }
 
 function getCellEmoji(cell) {
@@ -194,11 +214,8 @@ function getCellEmoji(cell) {
 
 function getNonogramAsEmoji() {
   let res = "";
-  // Get the nonogram table
-  var table = document.getElementById("nonogram-table");
-
   // Get all the rows in the table
-  var rows = table.getElementsByTagName("tr");
+  var rows = TABLE.getElementsByTagName("tr");
 
   // Loop over each row
   for (var i = 0; i < rows.length; i++) {
@@ -224,13 +241,7 @@ function enableShareButton() {
     let sharedText = "@nonogrammers 8762\n\n";
     sharedText += getNonogramAsEmoji();
     navigator.clipboard
-      .writeText(sharedText)
-      .then(() => {
-        console.log("Text copied to clipboard");
-      })
-      .catch((err) => {
-        console.error("Could not copy text: ", err);
-      });
+      .writeText(sharedText);
   });
 }
 
@@ -260,7 +271,6 @@ function enableShareModal() {
   var nonogramPreview = document.getElementById("nonogram-preview");
   openButton.onclick = function() {
     modal.style.display = "block";
-    console.log(getNonogramAsEmoji());
     nonogramPreview.textContent = getNonogramAsEmoji();
   }
   
@@ -276,6 +286,7 @@ function enableShareModal() {
 }
 
 createNonogram();
+attachNonogramCellSelectionEventHandlers();
 enableShareButton();
 enableHowToModal();
 enableShareModal();
