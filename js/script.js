@@ -1,94 +1,26 @@
-// 5 x 5
-// let hints = {
-//   rowHints: [[2, 2], [], [1, 2], [3], [3]],
-//   colHints: [[1, 2], [1, 2], [2], [1, 1, 1], [1, 1]],
-// };
+function countDaysFromDate(targetDate) {
+  const currentDate = new Date();
+  const targetDateObj = new Date(targetDate);
 
-// 10 x 10
-// let hints = {
-//   rowHints: [
-//     [1, 3, 2],
-//     [1, 2],
-//     [1, 2],
-//     [5],
-//     [3],
-//     [3, 4],
-//     [1, 1, 3, 1],
-//     [2, 1],
-//     [1, 1, 2, 2],
-//     [1, 3, 1],
-//   ],
-//   colHints: [
-//     [2, 1, 2],
-//     [1, 1],
-//     [1, 3, 1],
-//     [2, 3, 1, 1],
-//     [1, 2, 3],
-//     [1, 2, 2, 2],
-//     [2, 2],
-//     [1, 1, 2],
-//     [1, 1, 2],
-//     [1, 2],
-//   ],
-// };
+  // Calculate the time difference in milliseconds
+  const timeDiff = currentDate - targetDateObj;
 
-let hints = {
-  rowHints: [
-    [1, 2, 1],
-    [2, 2, 1],
-    [1, 2, 1],
-    [2, 2, 1],
-    [2, 2, 1],
-    [1, 3],
-    [2, 2],
-    [5, 2],
-  ],
-  colHints: [
-    [5, 1],
-    [1, 2, 2],
-    [2],
-    [1, 2, 1, 1],
-    [5, 2],
-    [1, 3],
-    [1, 1, 1, 1],
-    [2, 2, 1],
-  ],
-};
+  // Calculate the number of days
+  const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
 
-// 5 x 5
-// let solution = [
-//   [1, 1, 0, 1, 1],
-//   [0, 0, 0, 0, 0],
-//   [1, 0, 0, 1, 1],
-//   [1, 1, 1, 0, 0],
-//   [0, 1, 1, 1, 0],
-// ];
+  return daysDiff;
+}
 
-// 10 x 10
-// let solution = [
-//   [1, 0, 0, 1, 1, 1, 0, 1, 1, 0],
-//   [1, 0, 1, 1, 0, 0, 0, 0, 0, 0],
-//   [0, 1, 0, 0, 0, 1, 1, 0, 0, 0],
-//   [0, 0, 0, 1, 1, 1, 1, 1, 0, 0],
-//   [0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
-//   [0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
-//   [1, 0, 1, 0, 0, 1, 1, 1, 0, 1],
-//   [0, 0, 0, 1, 1, 0, 0, 0, 1, 0],
-//   [1, 0, 1, 0, 1, 1, 0, 0, 1, 1],
-//   [1, 0, 0, 1, 1, 1, 0, 0, 0, 1]
-// ];
+const START_DATE = '2023-05-24';
+const daysCount = countDaysFromDate(START_DATE);
 
-// 8 x 8
-let solution = [
-  [1, 0, 0, 1, 1, 0, 1, 0],
-  [1, 1, 0, 0, 1, 1, 0, 1],
-  [1, 0, 0, 1, 1, 0, 0, 1],
-  [1, 1, 0, 1, 1, 0, 1, 0],
-  [1, 1, 0, 0, 1, 1, 0, 1],
-  [0, 0, 0, 1, 0, 1, 1, 1],
-  [0, 1, 1, 0, 1, 1, 0, 0],
-  [1, 1, 1, 1, 1, 0, 1, 1],
-];
+
+let hints = DAILY_HINTS[daysCount];
+let solution = DAILY_SOLUTIONS[daysCount];
+
+console.log(hints, solution);
+
+
 
 function createNonogram() {
   let table = document.getElementById("nonogram-table");
@@ -190,7 +122,7 @@ function arraysEqual(a, b) {
 function validateRow(rowIndex, offset) {
   let rowCells = Array.from(
     document.querySelectorAll(
-      `#nonogram-table tr:nth-child(${rowIndex + offset + 2}) .cell`
+      `#nonogram-table tr:nth-child(${rowIndex + offset + 1}) .cell`
     )
   );
   let currentRow = rowCells.map((cell) =>
@@ -210,7 +142,7 @@ function validateRow(rowIndex, offset) {
 function validateColumn(colIndex, offset) {
   let colCells = Array.from(
     document.querySelectorAll(
-      `#nonogram-table tr .cell:nth-child(${colIndex + offset})`
+      `#nonogram-table tr .cell:nth-child(${colIndex + offset + 1})`
     )
   );
   let currentCol = colCells.map((cell) =>
@@ -272,7 +204,6 @@ function getNonogramAsEmoji() {
   for (var i = 0; i < rows.length; i++) {
     // Get all the cells in the current row
     var cells = rows[i].getElementsByTagName("td");
-    const resRow = [];
 
     // Loop over each cell
     for (var j = 0; j < cells.length; j++) {
