@@ -70,6 +70,7 @@ function createNonogram() {
 }
 
 function getHintFromRow(row) {
+  if (!row) return [];
   let hint = [];
   let count = 0;
   for (let i = 0; i < row.length; i++) {
@@ -160,23 +161,33 @@ function handleNonogramCellSelection(cell) {
 function attachNonogramCellSelectionEventHandlers() {
   let isDragging = false; // Flag to track if dragging is in progress
 
-  // Event listener for mouse/finger down event
-  TABLE.addEventListener("mousedown", function (event) {
+  function handleStart(event) {
     isDragging = true;
     handleNonogramCellSelection(event.target);
-  });
+  }
 
-  // Event listener for mouse/finger move event
-  TABLE.addEventListener("mousemove", function (event) {
+  function handleMove(event) {
     if (isDragging) {
+      event.preventDefault(); // Prevent scrolling while dragging
       handleNonogramCellSelection(event.target);
     }
-  });
+  }
+
+  function handleEnd(event) {
+    isDragging = false;
+  }
+
+  // Event listener for mouse/finger down event
+  TABLE.addEventListener("mousedown", handleStart);
+  TABLE.addEventListener("touchstart", handleStart);
+
+  // Event listener for mouse/finger move event
+  TABLE.addEventListener("mousemove", handleMove);
+  TABLE.addEventListener("touchmove", handleMove);
 
   // Event listener for mouse/finger up event
-  window.addEventListener("mouseup", function () {
-    isDragging = false;
-  });
+  window.addEventListener("mouseup", handleEnd);
+  window.addEventListener("touchend", handleEnd);
 }
 
 function getCellEmoji(cell) {
